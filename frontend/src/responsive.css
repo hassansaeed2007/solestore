@@ -1,0 +1,304 @@
+/* ═══════════════════════════════════════════════
+   SOLESTORE — GLOBAL MOBILE RESPONSIVE OVERRIDES
+   Applies on top of existing styles, no breakage
+   ═══════════════════════════════════════════════ */
+
+/* ── Tablet (≤ 1024px) ── */
+@media (max-width: 1024px) {
+  .container { padding: 0 1.2rem; }
+
+  /* Seller/Admin/Customer dashboards — narrower sidebar */
+  .seller-sidebar { width: 220px !important; }
+}
+
+/* ── Small tablet / large phone (≤ 768px) ── */
+@media (max-width: 768px) {
+  .container { padding: 0 1rem; }
+
+  /* ── Hero section ── */
+  section [style*="gridTemplateColumns: '1fr 1fr'"],
+  div[style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Cart page ── */
+  div[style*="gridTemplateColumns: '1fr 320px'"],
+  div[style*="gridTemplateColumns: '1fr 340px'"],
+  div[style*="gridTemplateColumns: '1fr 480px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Checkout steps ── */
+  div[style*="gridTemplateColumns: '1fr 320px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Order detail 2-col ── */
+  div[style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Products grid — 2 cols on tablet ── */
+  div[style*="gridTemplateColumns: 'repeat(3, 1fr)'"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Stat cards ── */
+  div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* ── Auth pages — hide left panel ── */
+  .hide-mobile { display: none !important; }
+
+  /* ── Seller/Admin/Customer sidebar ── */
+  .seller-sidebar { display: none !important; }
+}
+
+/* ── Mobile (≤ 640px) ── */
+@media (max-width: 640px) {
+  .container { padding: 0 0.8rem; }
+
+  /* ── Products grid — 1 col on mobile ── */
+  div[style*="gridTemplateColumns: 'repeat(3, 1fr)'"],
+  div[style*="gridTemplateColumns: 'repeat(2, 1fr)'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Stat cards — 2 cols ── */
+  div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"],
+  div[style*="gridTemplateColumns: 'repeat(auto-fit"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Cart items — stack ── */
+  div[style*="gridTemplateColumns: '1fr 320px'"],
+  div[style*="gridTemplateColumns: '1fr 340px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Cart item row — wrap ── */
+  div[style*="display: 'flex'"][style*="gap: '1rem'"][style*="alignItems: 'center'"] {
+    flex-wrap: wrap;
+  }
+
+  /* ── Headings ── */
+  h1 { font-size: clamp(1.4rem, 5vw, 2rem) !important; }
+  h2 { font-size: clamp(1.2rem, 4vw, 1.6rem) !important; }
+
+  /* ── Page padding ── */
+  .page { padding: 1.5rem 0 !important; }
+
+  /* ── Tables — horizontal scroll ── */
+  div[style*="overflowX: 'auto'"] { overflow-x: auto !important; }
+  table { min-width: 500px; }
+
+  /* ── Modals — full width ── */
+  div[style*="maxWidth: 560"],
+  div[style*="maxWidth: 540"],
+  div[style*="maxWidth: 460"],
+  div[style*="maxWidth: 440"] {
+    max-width: calc(100vw - 2rem) !important;
+    margin: 0 1rem !important;
+  }
+
+  /* ── Seller register steps ── */
+  div[style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Navbar dropdown ── */
+  .nav-dropdown {
+    right: 0.5rem !important;
+    left: 0.5rem !important;
+    min-width: unset !important;
+  }
+
+  /* ── Hero section padding ── */
+  section[style*="padding: '6rem"] {
+    padding: 3rem 1rem !important;
+  }
+  section[style*="padding: '7rem"] {
+    padding: 3rem 1rem !important;
+  }
+
+  /* ── Full width banner height ── */
+  section[style*="height: 750"],
+  section[style*="height: 600"] {
+    height: 300px !important;
+  }
+
+  /* ── Category grid ── */
+  div[style*="minmax(140px"] {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  /* ── Features grid ── */
+  .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+  .grid-3 { grid-template-columns: 1fr !important; }
+
+  /* ── Testimonials ── */
+  div[style*="minmax(300px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Footer grid ── */
+  div[style*="minmax(160px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Stats banner ── */
+  div[style*="minmax(140px, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Product detail — 2 col to 1 col ── */
+  div[style*="gridTemplateColumns: '1fr 1fr'"][style*="gap: '3rem'"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* ── Order detail grid ── */
+  div[style*="gridTemplateColumns: '1fr 1fr'"][style*="gap: '1.2rem'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Checkout grid ── */
+  div[style*="gridTemplateColumns: '1fr 320px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Seller register form grids ── */
+  div[style*="gridTemplateColumns: '1fr 1fr'"][style*="gap: '1rem'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* ── Auth page right panel full width ── */
+  div[style*="maxWidth: 420"],
+  div[style*="maxWidth: 440"],
+  div[style*="maxWidth: 460"],
+  div[style*="maxWidth: 480"] {
+    max-width: 100% !important;
+  }
+
+  /* ── Login page flex ── */
+  div[style*="minHeight: '100vh'"][style*="display: 'flex'"] {
+    flex-direction: column !important;
+  }
+
+  /* ── Customer dashboard sidebar ── */
+  aside[style*="width: 220"] { display: none !important; }
+
+  /* ── Admin dashboard sidebar ── */
+  aside[style*="width: 220"],
+  aside[style*="width: 240"],
+  aside[style*="width: 280"] { display: none !important; }
+
+  /* ── Mobile bar for dashboards ── */
+  .seller-mobile-bar { display: flex !important; }
+
+  /* ── Dashboard main padding ── */
+  main[style*="padding: '1.5rem 2rem'"] { padding: 1rem !important; }
+  main[style*="padding: '2rem 2.5rem'"] { padding: 1rem !important; }
+  main[style*="padding: '2rem'"] { padding: 1rem !important; }
+
+  /* ── Seller overview stat grid ── */
+  div[style*="gridTemplateColumns: 'repeat(5, 1fr)'"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Seller recent products ── */
+  div[style*="gridTemplateColumns: 'repeat(3, 1fr)'"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  /* ── Order items flex wrap ── */
+  div[style*="display: 'flex'"][style*="flexWrap: 'wrap'"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* ── Buttons full width on mobile ── */
+  .btn-full-mobile { width: 100% !important; justify-content: center !important; }
+
+  /* ── Font sizes ── */
+  .section-title { font-size: 1.6rem !important; }
+  .brand-name { font-size: 1.1rem !important; }
+}
+
+/* ── Very small (≤ 400px) ── */
+@media (max-width: 400px) {
+  .container { padding: 0 0.6rem; }
+
+  div[style*="gridTemplateColumns: 'repeat(3, 1fr)'"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  div[style*="minmax(140px"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .grid-4 { grid-template-columns: 1fr !important; }
+
+  h1 { font-size: 1.3rem !important; }
+}
+
+/* ── Dashboard mobile top padding (for fixed top bar) ── */
+@media (max-width: 640px) {
+  .seller-mobile-bar { display: flex !important; }
+
+  /* Push main content below fixed top bar */
+  div[style*="flex: 1"][style*="padding: '1.5rem 2rem'"],
+  div[style*="flex: 1"][style*="padding: '2rem'"],
+  main { padding-top: 70px !important; }
+
+  /* Products page hero */
+  div[style*="padding: '3rem 0 2rem'"] { padding: 1.5rem 0 1rem !important; }
+
+  /* Cart page grid */
+  div[style*="gridTemplateColumns: '1fr 320px'"],
+  div[style*="gridTemplateColumns: '1fr 340px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Cart item row */
+  div[style*="display: 'flex'"][style*="gap: '1.2rem'"][style*="alignItems: 'center'"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Checkout grid */
+  div[style*="gridTemplateColumns: '1fr 320px'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Product detail 2-col */
+  div[style*="gap: '3rem'"][style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Reviews 2-col */
+  div[style*="gap: '2rem'"][style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Order detail 2-col */
+  div[style*="gap: '1.2rem'"][style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Seller register form grids */
+  div[style*="gap: '1rem'"][style*="gridTemplateColumns: '1fr 1fr'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Seller login left panel */
+  div[style*="flex: 1"][style*="position: 'relative'"][style*="overflow: 'hidden'"].hide-mobile {
+    display: none !important;
+  }
+
+  /* Auth right panel full width */
+  div[style*="maxWidth: 480"][style*="display: 'flex'"][style*="flexDirection: 'column'"] {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
