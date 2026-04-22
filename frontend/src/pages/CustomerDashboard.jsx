@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
+import useLogout from '../hooks/useLogout';
+import LogoutConfirm from '../components/LogoutConfirm';
 import { fetchCart } from '../store/slices/cartSlice';
 import { toast } from 'react-toastify';
 import api from '../services/api';
@@ -9,6 +11,7 @@ import {
   FiShoppingBag, FiMessageCircle, FiSearch, FiLogOut,
   FiPackage, FiShoppingCart, FiStar, FiUser, FiBarChart2, FiMenu, FiX,
 } from 'react-icons/fi';
+import BackButton from '../components/BackButton';
 
 const MENU = [
   { key: 'shop',     label: 'Shop',       icon: <FiSearch size={18} /> },
@@ -55,6 +58,7 @@ const CustomerDashboard = () => {
   const [loadingMsgs, setLoadingMsgs] = useState(false);
   const [msgModal, setMsgModal] = useState(null); // { sellerId, sellerName, productName }
   const [msgText, setMsgText] = useState('');
+  const { showConfirm, requestLogout, cancelLogout, confirmLogout } = useLogout();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const cartCount = cart?.items?.reduce((s, i) => s + i.quantity, 0) || 0;
@@ -188,7 +192,7 @@ const CustomerDashboard = () => {
           </button>
         </nav>
         <div style={{ padding: '1rem 1.2rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <button onClick={() => { dispatch(logout()); navigate('/'); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.7rem', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.08)', border: 'none', color: 'rgba(255,255,255,0.75)', borderRadius: 8, cursor: 'pointer', fontSize: '0.88rem' }}>
+          <button onClick={requestLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.7rem', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.08)', border: 'none', color: 'rgba(255,255,255,0.75)', borderRadius: 8, cursor: 'pointer', fontSize: '0.88rem' }}>
             <FiLogOut size={16} /> Logout
           </button>
         </div>
@@ -212,7 +216,7 @@ const CustomerDashboard = () => {
               ))}
             </nav>
             <div style={{ padding: '1rem 1.2rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-              <button onClick={() => { dispatch(logout()); navigate('/'); }} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.7rem', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.08)', border: 'none', color: 'rgba(255,255,255,0.75)', borderRadius: 8, cursor: 'pointer', fontSize: '0.88rem', fontFamily: 'inherit' }}>
+              <button onClick={requestLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.7rem', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.08)', border: 'none', color: 'rgba(255,255,255,0.75)', borderRadius: 8, cursor: 'pointer', fontSize: '0.88rem', fontFamily: 'inherit' }}>
                 <FiLogOut size={16} /> Logout
               </button>
             </div>
@@ -226,6 +230,7 @@ const CustomerDashboard = () => {
         {/* ── SHOP ── */}
         {active === 'shop' && (
           <div>
+            <BackButton />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div>
                 <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.2rem' }}>Shop Shoes</h1>
@@ -315,6 +320,7 @@ const CustomerDashboard = () => {
         {/* ── ORDERS ── */}
         {active === 'orders' && (
           <div>
+            <BackButton />
             <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.3rem' }}>My Orders</h1>
             <p style={{ color: 'var(--gray)', marginBottom: '1.8rem', fontSize: '0.9rem' }}>Track all your purchases</p>
             {loadingOrders ? <div className="loading-container"><div className="spinner" /></div>
@@ -357,6 +363,7 @@ const CustomerDashboard = () => {
         {/* ── INBOX ── */}
         {active === 'inbox' && (
           <div>
+            <BackButton />
             <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.3rem' }}>Inbox</h1>
             <p style={{ color: 'var(--gray)', marginBottom: '1.8rem', fontSize: '0.9rem' }}>Messages you sent to sellers</p>
             {loadingMsgs ? <div className="loading-container"><div className="spinner" /></div>
@@ -392,6 +399,7 @@ const CustomerDashboard = () => {
         {/* ── PROFILE ── */}
         {active === 'profile' && (
           <div>
+            <BackButton />
             <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '1.8rem' }}>My Profile</h1>
             <div className="card" style={{ padding: '2rem', maxWidth: 500 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -445,8 +453,10 @@ const CustomerDashboard = () => {
           </div>
         </div>
       )}
+      {showConfirm && <LogoutConfirm onConfirm={confirmLogout} onCancel={cancelLogout} />}
     </div>
   );
 };
 
 export default CustomerDashboard;
+

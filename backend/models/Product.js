@@ -48,6 +48,15 @@ const productSchema = new mongoose.Schema(
       url: { type: String, required: true },
       publicId: { type: String, required: true },
     },
+    // Multiple images support
+    images: [{
+      url: { type: String },
+      publicId: { type: String },
+    }],
+    // Available sizes
+    sizes: [{ type: String }],
+    // Available colors
+    colors: [{ type: String }],
     seller: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

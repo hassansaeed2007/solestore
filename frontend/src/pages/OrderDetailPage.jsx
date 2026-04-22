@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchOrder } from '../store/slices/orderSlice';
 import { FiArrowLeft, FiMapPin, FiCreditCard } from 'react-icons/fi';
+import BackButton from '../components/BackButton';
 
 const STATUS = {
   pending:    { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24' },
@@ -69,7 +70,7 @@ const OrderDetailPage = () => {
           </div>
         )}
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.2rem', marginBottom: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.2rem', marginBottom: '1.5rem' }}>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: '1.3rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.8rem' }}>
               <FiMapPin size={16} color="var(--secondary)" />
@@ -104,6 +105,11 @@ const OrderDetailPage = () => {
                 <img src={item.image} alt={item.name} style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 10, background: 'var(--bg-2)', flexShrink: 0 }} />
                 <div style={{ flex: 1 }}>
                   <p style={{ fontWeight: 700, color: 'white', fontSize: '0.95rem' }}>{item.name}</p>
+                  {item.size && (
+                    <span style={{ display: 'inline-block', background: 'rgba(201,169,110,0.1)', border: '1px solid rgba(201,169,110,0.25)', color: '#c9a96e', fontSize: '0.68rem', fontWeight: 700, padding: '0.1rem 0.5rem', marginTop: '0.2rem' }}>
+                      Size: {item.size}
+                    </span>
+                  )}
                   <p style={{ color: 'var(--gray)', fontSize: '0.82rem', marginTop: '0.2rem' }}>Qty: {item.quantity}</p>
                 </div>
                 <span style={{ fontWeight: 800, color: 'white', fontSize: '1rem' }}>${(item.price * item.quantity).toFixed(2)}</span>

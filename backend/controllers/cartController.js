@@ -26,7 +26,8 @@ exports.getCart = async (req, res, next) => {
 // @access  Private
 exports.addToCart = async (req, res, next) => {
   try {
-    const { productId, quantity = 1 } = req.body;
+    const { productId, quantity = 1, size = '', color = '' } = req.body;
+
 
     const product = await Product.findById(productId);
     if (!product) {
@@ -44,13 +45,12 @@ exports.addToCart = async (req, res, next) => {
     }
 
     const existingItem = cart.items.find(
-      (item) => item.product.toString() === productId
+      (item) => item.product.toString() === productId && item.size === size && item.color === color
     );
-
     if (existingItem) {
       existingItem.quantity += Number(quantity);
     } else {
-      cart.items.push({ product: productId, quantity: Number(quantity), price: product.price });
+      cart.items.push({ product: productId, quantity: Number(quantity), price: product.price, size, color });
     }
 
     await cart.save();

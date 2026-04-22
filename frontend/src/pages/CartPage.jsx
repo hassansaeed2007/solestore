@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCart, updateCartItem, removeFromCart } from '../store/slices/cartSlice';
 import { FiTrash2, FiMinus, FiPlus, FiArrowRight, FiShoppingBag } from 'react-icons/fi';
+import BackButton from '../components/BackButton';
 import { toast } from 'react-toastify';
 
 const D = { bg: 'var(--bg)', card: 'var(--bg-card)', border: 'var(--border)', gray: 'var(--gray)' };
@@ -42,10 +43,11 @@ const CartPage = () => {
   return (
     <div style={{ minHeight: '100vh', background: D.bg, padding: '2.5rem 0' }}>
       <div className="container">
+        <BackButton />
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'white', marginBottom: '0.3rem' }}>Shopping Cart</h1>
         <p style={{ color: D.gray, marginBottom: '2rem', fontSize: '0.9rem' }}>{items.length} item{items.length !== 1 ? 's' : ''} in your cart</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           {/* Items */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {items.map((item) => (
@@ -58,6 +60,11 @@ const CartPage = () => {
                   <Link to={`/products/${item.product?._id}`} style={{ fontWeight: 700, fontSize: '1rem', color: 'white', display: 'block', marginBottom: '0.3rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {item.product?.name}
                   </Link>
+                  {item.size && (
+                    <span style={{ display: 'inline-block', background: 'rgba(201,169,110,0.1)', border: '1px solid rgba(201,169,110,0.25)', color: '#c9a96e', fontSize: '0.72rem', fontWeight: 700, padding: '0.15rem 0.5rem', marginBottom: '0.3rem' }}>
+                      Size: {item.size}
+                    </span>
+                  )}
                   <p style={{ color: 'var(--secondary)', fontWeight: 700, fontSize: '1rem' }}>${item.price.toFixed(2)} each</p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-3)', borderRadius: 50, padding: '0.3rem 0.5rem' }}>

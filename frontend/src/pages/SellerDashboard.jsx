@@ -9,6 +9,9 @@ import {
   FiPlus, FiEdit2, FiTrash2, FiX, FiLogOut, FiDollarSign,
   FiCheck, FiMail, FiTrendingUp, FiMenu,
 } from 'react-icons/fi';
+import useLogout from '../hooks/useLogout';
+import LogoutConfirm from '../components/LogoutConfirm';
+import BackButton from '../components/BackButton';
 
 const CATS = ['sneakers','boots','sandals','formal','sports','casual','kids'];
 const MENU = [
@@ -26,17 +29,37 @@ const STATUS = {
 };
 
 // ── Product Modal ───────────────────────────────────────
-const EMPTY = { name: '', description: '', price: '', category: 'sneakers', brand: '', stock: '', image: null };
+const EMPTY = { name: '', description: '', price: '', category: 'sneakers', brand: '', stock: '', image: null, extraImages: [], sizes: [], colors: [] };
+
+const ALL_SIZES = ['36','37','38','39','40','41','42','43','44','45','46','47'];
+const PRESET_COLORS = ['Black','White','Brown','Navy','Red','Grey','Beige','Green','Blue','Orange','Yellow','Pink'];
+
 const ProductModal = ({ initial, onClose, onSave, loading }) => {
   const [form, setForm] = useState(initial || EMPTY);
   const [preview, setPreview] = useState(initial?.imageUrl || null);
   const isEdit = !!initial?._id;
+
+  const toggleSize = (s) => {
+    const cur = form.sizes || [];
+    setForm({ ...form, sizes: cur.includes(s) ? cur.filter(x => x !== s) : [...cur, s] });
+  };
+  const toggleColor = (c) => {
+    const cur = form.colors || [];
+    setForm({ ...form, colors: cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c] });
+  };
+  const handleExtraImages = (e) => {
+    const files = Array.from(e.target.files).slice(0, 4); // max 4 extra
+    setForm({ ...form, extraImages: files });
+  };
   const handleImg = (e) => { const f = e.target.files[0]; if (f) { setForm({ ...form, image: f }); setPreview(URL.createObjectURL(f)); } };
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!isEdit && !form.image) { toast.error('Product image is required'); return; }
     const fd = new FormData();
-    Object.entries(form).forEach(([k, v]) => { if (v !== null && k !== 'imageUrl') fd.append(k, v); });
+    Object.entries(form).forEach(([k, v]) => { if (v !== null && k !== 'imageUrl' && k !== 'sizes' && k !== 'colors' && k !== 'extraImages') fd.append(k, v); });
+    (form.sizes || []).forEach(s => fd.append('sizes', s));
+    (form.colors || []).forEach(c => fd.append('colors', c));
+    (form.extraImages || []).forEach(f => fd.append('extraImages', f));
     onSave(fd, isEdit ? initial._id : null);
   };
   return (
@@ -65,9 +88,52 @@ const ProductModal = ({ initial, onClose, onSave, loading }) => {
             <div className="form-group"><label>Brand</label><input className="form-control" placeholder="e.g. Nike, Adidas" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} required /></div>
           </div>
           <div className="form-group">
+            <label>Available Sizes</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.3rem' }}>
+              {ALL_SIZES.map((s) => {
+                const selected = (form.sizes || []).includes(s);
+                return (
+                  <button key={s} type="button" onClick={() => toggleSize(s)}
+                    style={{ padding: '0.35rem 0.7rem', border: `1px solid ${selected ? '#c9a96e' : 'rgba(255,255,255,0.15)'}`, background: selected ? 'rgba(201,169,110,0.15)' : 'transparent', color: selected ? '#c9a96e' : 'rgba(255,255,255,0.5)', borderRadius: 0, cursor: 'pointer', fontSize: '0.8rem', fontWeight: selected ? 700 : 400, fontFamily: 'inherit', transition: 'all 0.15s' }}>
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.4rem' }}>Click to select available sizes</p>
+          </div>
+          <div className="form-group">
+            <label>Available Colors</label>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginTop: '0.3rem' }}>
+              {PRESET_COLORS.map((c) => {
+                const selected = (form.colors || []).includes(c);
+                return (
+                  <button key={c} type="button" onClick={() => toggleColor(c)}
+                    style={{ padding: '0.35rem 0.8rem', border: `1px solid ${selected ? '#c9a96e' : 'rgba(255,255,255,0.15)'}`, background: selected ? 'rgba(201,169,110,0.15)' : 'transparent', color: selected ? '#c9a96e' : 'rgba(255,255,255,0.5)', borderRadius: 0, cursor: 'pointer', fontSize: '0.8rem', fontWeight: selected ? 700 : 400, fontFamily: 'inherit', transition: 'all 0.15s' }}>
+                    {c}
+                  </button>
+                );
+              })}
+            </div>
+            <p style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.3)', marginTop: '0.4rem' }}>Click to select available colors</p>
+          </div>
+          <div className="form-group">
             <label>Product Image {isEdit && <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, textTransform: 'none', fontSize: '0.75rem' }}>(leave empty to keep current)</span>}</label>
             <input type="file" accept="image/*" onChange={handleImg} className="form-control" style={{ padding: '0.5rem' }} />
             {preview && <div style={{ marginTop: '0.8rem', overflow: 'hidden', height: 130, background: '#111' }}><img src={preview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></div>}
+          </div>
+          <div className="form-group">
+            <label>Extra Images <span style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 400, textTransform: 'none', fontSize: '0.75rem' }}>(up to 4 additional photos)</span></label>
+            <input type="file" accept="image/*" multiple onChange={handleExtraImages} className="form-control" style={{ padding: '0.5rem' }} />
+            {form.extraImages?.length > 0 && (
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                {form.extraImages.map((f, i) => (
+                  <div key={i} style={{ width: 70, height: 70, overflow: 'hidden', background: '#111' }}>
+                    <img src={URL.createObjectURL(f)} alt={`extra-${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid rgba(201,169,110,0.1)' }}>
             <button type="button" onClick={onClose} style={{ padding: '0.7rem 1.4rem', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)', borderRadius: 0, cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600, fontSize: '0.85rem' }}>Cancel</button>
@@ -118,6 +184,7 @@ const SellerDashboard = () => {
   const handleMarkRead = async (id) => {
     try { await api.put(`/seller/messages/${id}/read`); setMessages((p) => p.map((m) => m._id === id ? { ...m, isRead: true } : m)); loadStats(); } catch {}
   };
+  const { showConfirm, requestLogout, cancelLogout, confirmLogout } = useLogout();
   const unreadCount = messages.filter((m) => !m.isRead).length;
 
   const G = '#c9a96e'; // gold
@@ -181,7 +248,7 @@ const SellerDashboard = () => {
 
       {/* Logout */}
       <div style={{ padding: '1rem 1.5rem' }}>
-        <button onClick={() => dispatch(logout())} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.7rem 1rem', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.15)', color: '#f87171', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, fontFamily: 'inherit', transition: 'all 0.2s', borderRadius: 0 }}
+        <button onClick={requestLogout}
           onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.12)'}
           onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.06)'}>
           <FiLogOut size={14} /> Sign Out
@@ -224,6 +291,7 @@ const SellerDashboard = () => {
         {/* OVERVIEW */}
         {active === 'overview' && (
           <div>
+            <BackButton />
             {/* Header */}
             <div style={{ marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: '1px solid rgba(201,169,110,0.1)' }}>
               <p style={{ color: 'rgba(201,169,110,0.5)', fontSize: '0.68rem', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.5rem' }}>Seller Dashboard</p>
@@ -311,6 +379,7 @@ const SellerDashboard = () => {
         {/* ORDERS */}
         {active === 'orders' && (
           <div>
+            <BackButton />
             <div style={{ marginBottom: '1.5rem' }}>
               <p style={{ color: G, fontSize: '0.68rem', letterSpacing: '2.5px', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.4rem' }}>Sales</p>
               <h1 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'white', fontFamily: "'Playfair Display',serif" }}>Customer Orders</h1>
@@ -354,6 +423,7 @@ const SellerDashboard = () => {
                               <img src={item.image} alt={item.name} style={{ width: 30, height: 30, objectFit: 'cover', flexShrink: 0 }} />
                               <div style={{ minWidth: 0 }}>
                                 <p style={{ fontWeight: 600, fontSize: '0.75rem', color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</p>
+                                {item.size && <p style={{ color: '#c9a96e', fontSize: '0.62rem', fontWeight: 700 }}>Size: {item.size}</p>}
                                 <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.65rem' }}>×{item.quantity} · ${item.price.toFixed(2)}</p>
                               </div>
                             </div>
@@ -502,6 +572,8 @@ const SellerDashboard = () => {
       </main>
 
       {modal && <ProductModal initial={modal === 'add' ? null : modal} onClose={() => setModal(null)} onSave={handleSave} loading={prodLoading} />}
+
+      {showConfirm && <LogoutConfirm onConfirm={confirmLogout} onCancel={cancelLogout} />}
 
       <style>{`
         @media (max-width: 640px) {

@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { fetchProducts } from '../store/slices/productSlice';
 import { FiSearch, FiFilter, FiX, FiShoppingCart, FiStar, FiArrowRight } from 'react-icons/fi';
 import useReveal from '../hooks/useReveal';
+import BackButton from '../components/BackButton';
 
 const CATEGORIES = ['sneakers','boots','sandals','formal','sports','casual','kids'];
 const SORTS = [
@@ -115,6 +116,7 @@ const ProductsPage = () => {
       {/* ── Hero bar ── */}
       <div style={{ background: '#0a0a0a', borderBottom: '1px solid rgba(201,169,110,0.12)', padding: '3rem 0 2rem' }}>
         <div style={{ maxWidth: '100%', padding: '0 1rem' }}>
+          <BackButton />
           <p style={{ color: '#c9a96e', fontSize: '0.72rem', letterSpacing: '3px', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.5rem' }}>Our Collection</p>
           <h1 style={{ fontFamily: "'Playfair Display',serif", fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 800, color: 'white', marginBottom: '0.5rem' }}>
             Premium <span style={{ background: 'linear-gradient(135deg,#c9a96e,#f0d080)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Footwear</span>

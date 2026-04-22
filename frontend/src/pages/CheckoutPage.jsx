@@ -5,8 +5,9 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { fetchCart } from '../store/slices/cartSlice';
 import { toast } from 'react-toastify';
-import api from '../services/api';
+import api from '../services/api'; 
 import { FiPackage, FiCreditCard, FiLock, FiArrowRight } from 'react-icons/fi';
+import BackButton from '../components/BackButton';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
 
@@ -62,12 +63,44 @@ const PaymentForm = ({ cart, address, onSuccess }) => {
   );
 };
 
+// ── COD Form ─────────────────────────────────────────────
+const CODForm = ({ cart, address, onSuccess }) => {
+  const [loading, setLoading] = useState(false);
+  const handleCOD = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await api.post('/orders', { shippingAddress: address, paymentMethod: 'cod' });
+      toast.success('Order placed! Pay on delivery.');
+      onSuccess(res.data.order._id);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to place order');
+    }
+    setLoading(false);
+  };
+  return (
+    <form onSubmit={handleCOD}>
+      <div style={{ background: 'rgba(201,169,110,0.06)', border: '1px solid rgba(201,169,110,0.2)', padding: '1rem', marginBottom: '1.2rem', fontSize: '0.85rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7 }}>
+        💵 You will pay <strong style={{ color: '#c9a96e' }}>${cart?.totalPrice?.toFixed(2)}</strong> in cash when your order is delivered.
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', padding: '0.8rem 0', borderTop: '1px solid var(--border)' }}>
+        <span style={{ fontWeight: 700, color: 'white' }}>Total</span>
+        <span style={{ fontWeight: 900, fontSize: '1.3rem', color: '#c9a96e' }}>${cart?.totalPrice?.toFixed(2)}</span>
+      </div>
+      <button type="submit" disabled={loading}
+        style={{ width: '100%', padding: '0.9rem', background: 'linear-gradient(135deg,#c9a96e,#f0d080)', color: '#0a0a0a', border: 'none', fontWeight: 800, fontSize: '0.95rem', cursor: 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+        {loading ? 'Placing Order...' : '💵 Place Order (Cash on Delivery)'}
+      </button>
+    </form>
+  );
+};
+
 const CheckoutPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { cart } = useSelector((s) => s.cart);
+  const navigate = useNavigate();  const { cart } = useSelector((s) => s.cart);
   const [address, setAddress] = useState({ street: '', city: '', state: '', zipCode: '', country: 'US' });
   const [step, setStep] = useState(1);
+  const [payMethod, setPayMethod] = useState('card'); // 'card' or 'cod'
 
   useEffect(() => { dispatch(fetchCart()); }, [dispatch]);
 
@@ -77,6 +110,7 @@ const CheckoutPage = () => {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '2.5rem 0' }}>
       <div className="container" style={{ maxWidth: 900 }}>
+        <BackButton />
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'white', marginBottom: '0.5rem' }}>Checkout</h1>
 
         {/* Steps */}
@@ -94,7 +128,7 @@ const CheckoutPage = () => {
           ))}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: '2rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 16, padding: '2rem' }}>
             {step === 1 && (
               <>
@@ -121,12 +155,31 @@ const CheckoutPage = () => {
             )}
             {step === 2 && (
               <>
-                <h2 style={{ fontWeight: 700, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white', fontSize: '1.1rem' }}>
-                  <FiCreditCard size={18} color="var(--secondary)" /> Payment Details
+                <h2 style={{ fontWeight: 700, marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'white', fontSize: '1.1rem' }}>
+                  <FiCreditCard size={18} color="#c9a96e" /> Payment Method
                 </h2>
-                <Elements stripe={stripePromise}>
-                  <PaymentForm cart={cart} address={address} onSuccess={(id) => navigate(`/orders/${id}`)} />
-                </Elements>
+
+                {/* Payment method toggle */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', marginBottom: '1.5rem' }}>
+                  {[
+                    { key: 'card', label: '💳 Pay by Card', sub: 'Stripe secure payment' },
+                    { key: 'cod',  label: '💵 Cash on Delivery', sub: 'Pay when you receive' },
+                  ].map((m) => (
+                    <button key={m.key} type="button" onClick={() => setPayMethod(m.key)}
+                      style={{ padding: '0.9rem', background: payMethod === m.key ? 'rgba(201,169,110,0.12)' : 'rgba(255,255,255,0.03)', border: `1.5px solid ${payMethod === m.key ? '#c9a96e' : 'rgba(255,255,255,0.1)'}`, color: payMethod === m.key ? '#c9a96e' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontFamily: 'inherit', textAlign: 'left', transition: 'all 0.2s', borderRadius: 0 }}>
+                      <p style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: '0.2rem' }}>{m.label}</p>
+                      <p style={{ fontSize: '0.72rem', opacity: 0.7 }}>{m.sub}</p>
+                    </button>
+                  ))}
+                </div>
+
+                {payMethod === 'card' ? (
+                  <Elements stripe={stripePromise}>
+                    <PaymentForm cart={cart} address={address} onSuccess={(id) => navigate(`/orders/${id}`)} />
+                  </Elements>
+                ) : (
+                  <CODForm cart={cart} address={address} onSuccess={(id) => navigate(`/orders/${id}`)} />
+                )}
               </>
             )}
           </div>

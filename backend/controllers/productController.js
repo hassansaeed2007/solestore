@@ -79,23 +79,24 @@ exports.getProduct = async (req, res, next) => {
 // @access  Private/Seller
 exports.createProduct = async (req, res, next) => {
   try {
-    if (!req.file) {
+    if (!req.files?.image?.[0]) {
       return res.status(400).json({ success: false, message: 'Product image is required' });
     }
+    const mainFile = req.files.image[0];
+    const extraFiles = req.files.extraImages || [];
 
     const { name, description, price, category, brand, stock } = req.body;
+    const sizes = req.body.sizes ? (Array.isArray(req.body.sizes) ? req.body.sizes : [req.body.sizes]) : [];
+    const colors = req.body.colors ? (Array.isArray(req.body.colors) ? req.body.colors : req.body.colors.split(',').map(c => c.trim()).filter(Boolean)) : [];
 
     const product = await Product.create({
-      name,
-      description,
+      name, description,
       price: Number(price),
-      category,
-      brand,
+      category, brand,
       stock: Number(stock),
-      image: {
-        url: req.file.path,
-        publicId: req.file.filename,
-      },
+      sizes, colors,
+      image: { url: mainFile.path, publicId: mainFile.filename },
+      images: extraFiles.map(f => ({ url: f.path, publicId: f.filename })),
       seller: req.user._id,
     });
 

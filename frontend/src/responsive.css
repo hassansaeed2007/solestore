@@ -242,6 +242,64 @@
   h1 { font-size: 1.3rem !important; }
 }
 
+/* ── Cart item row mobile fix ── */
+@media (max-width: 640px) {
+  /* Cart item — stack image + info vertically */
+  div[style*="display: 'flex'"][style*="gap: '1.2rem'"][style*="alignItems: 'center'"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Cart item image smaller on mobile */
+  div[style*="width: 88"][style*="height: 88"] {
+    width: 64px !important;
+    height: 64px !important;
+  }
+
+  /* Seller register step indicator text — hide on very small */
+  div[style*="gridTemplateColumns: 'repeat(4, 1fr)'"] {
+    gap: 0.3rem !important;
+  }
+
+  /* SellerPendingPage card padding */
+  div[style*="padding: '3rem 2rem'"] {
+    padding: 1.5rem 1rem !important;
+  }
+
+  /* OrderDetail progress tracker */
+  div[style*="left: '8%'"][style*="right: '8%'"] {
+    left: 5% !important;
+    right: 5% !important;
+  }
+
+  /* Checkout payment toggle */
+  div[style*="gridTemplateColumns: '1fr 1fr'"][style*="gap: '0.8rem'"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* LogoutConfirm modal full width */
+  div[style*="maxWidth: 500"] {
+    max-width: calc(100vw - 2rem) !important;
+  }
+
+  /* SellerLogin right panel full width */
+  div[style*="maxWidth: 480"][style*="display: 'flex'"][style*="flexDirection: 'column'"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* ProductDetail qty + add to cart row */
+  div[style*="display: 'flex'"][style*="gap: '1rem'"][style*="flexWrap: 'wrap'"] {
+    flex-direction: column !important;
+  }
+
+  /* Navbar dropdown full width */
+  .nav-dropdown {
+    left: 0.5rem !important;
+    right: 0.5rem !important;
+    min-width: unset !important;
+  }
+}
+
 /* ── Dashboard mobile top padding (for fixed top bar) ── */
 @media (max-width: 640px) {
   .seller-mobile-bar { display: flex !important; }

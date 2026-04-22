@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../store/slices/authSlice';
+import useLogout from '../hooks/useLogout';
+import LogoutConfirm from '../components/LogoutConfirm';
 import {
   fetchAdminStats, fetchAllUsers, deleteUser,
   fetchSellerRequests, approveSeller, rejectSeller,
@@ -74,6 +76,7 @@ const AdminDashboard = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
   const { stats, users, orders, sellerRequests, loading } = useSelector((s) => s.admin);
+  const { showConfirm, requestLogout, cancelLogout, confirmLogout } = useLogout();
   const [active, setActive] = useState('overview');
   const [rejectModal, setRejectModal] = useState(null);
   const [rejectReason, setRejectReason] = useState('');
@@ -121,8 +124,6 @@ const AdminDashboard = () => {
     if (r.ok) { toast.success('Product deleted'); setAllProducts(p => p.filter(x => x._id !== id)); }
     else toast.error('Failed to delete product');
   };
-
-  const handleLogout = () => { dispatch(logout()); };
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg)', overflow: 'hidden' }}>
@@ -224,14 +225,14 @@ const AdminDashboard = () => {
 
         {/* Logout */}
         <div style={{ padding: '1rem 1.2rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <button onClick={handleLogout}
+          <button onClick={requestLogout}
             style={{
               width: '100%', display: 'flex', alignItems: 'center', gap: '0.7rem',
-              padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.08)',
-              border: 'none', color: 'rgba(255,255,255,0.75)', borderRadius: 8,
-              cursor: 'pointer', fontSize: '0.88rem',
+              padding: '0.7rem 1rem', background: 'rgba(239,68,68,0.08)',
+              border: '1px solid rgba(239,68,68,0.15)', color: '#f87171', borderRadius: 8,
+              cursor: 'pointer', fontSize: '0.88rem', fontFamily: 'inherit',
             }}>
-            <FiLogOut size={16} /> Logout
+            <FiLogOut size={16} /> Sign Out
           </button>
         </div>
       </aside>
@@ -497,6 +498,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       )}
+      {showConfirm && <LogoutConfirm onConfirm={confirmLogout} onCancel={cancelLogout} />}
     </div>
   );
 };

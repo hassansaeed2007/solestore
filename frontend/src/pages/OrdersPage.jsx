@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchMyOrders } from '../store/slices/orderSlice';
 import { FiPackage, FiEye, FiArrowRight } from 'react-icons/fi';
+import BackButton from '../components/BackButton';
 
 const STATUS = {
   pending:    { bg: 'rgba(245,158,11,0.15)',  color: '#fbbf24', label: 'Pending' },
@@ -22,6 +23,7 @@ const OrdersPage = () => {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', padding: '2.5rem 0' }}>
       <div className="container">
+        <BackButton />
         <h1 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'white', marginBottom: '0.3rem' }}>My Orders</h1>
         <p style={{ color: 'var(--gray)', marginBottom: '2rem', fontSize: '0.9rem' }}>{orders.length} order{orders.length !== 1 ? 's' : ''} placed</p>
 

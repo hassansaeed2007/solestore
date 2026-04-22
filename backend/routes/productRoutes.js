@@ -16,8 +16,8 @@ router.get('/', getProducts);
 router.get('/my-products', protect, authorize('seller'), sellerApproved, getMyProducts);
 router.get('/:id', getProduct);
 
-router.post('/', protect, authorize('seller', 'admin'), sellerApproved, upload.single('image'), createProduct);
-router.put('/:id', protect, authorize('seller', 'admin'), sellerApproved, upload.single('image'), updateProduct);
+router.post('/', protect, authorize('seller', 'admin'), sellerApproved, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'extraImages', maxCount: 4 }]), createProduct);
+router.put('/:id', protect, authorize('seller', 'admin'), sellerApproved, upload.fields([{ name: 'image', maxCount: 1 }, { name: 'extraImages', maxCount: 4 }]), updateProduct);
 router.delete('/:id', protect, authorize('seller', 'admin'), sellerApproved, deleteProduct);
 
 router.post('/:id/reviews', protect, authorize('customer'), addReview);

@@ -1,7 +1,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: process.env.REACT_APP_API_URL
+    ? `${process.env.REACT_APP_API_URL}/api`
+    : '/api',
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -14,7 +16,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle 401 globally — don't redirect if already on auth pages
+// Handle 401 globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {

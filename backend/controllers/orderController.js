@@ -12,7 +12,8 @@ const {
 // @access  Private/Customer
 exports.createOrder = async (req, res, next) => {
   try {
-    const { shippingAddress } = req.body;
+    const { shippingAddress, paymentMethod = 'card' } = req.body;
+
 
     const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
 
@@ -39,6 +40,8 @@ exports.createOrder = async (req, res, next) => {
         image: product.image.url,
         price: item.price,
         quantity: item.quantity,
+        size: item.size || '',
+        color: item.color || '',
       });
     }
 
@@ -47,6 +50,8 @@ exports.createOrder = async (req, res, next) => {
       items: orderItems,
       shippingAddress,
       totalPrice: cart.totalPrice,
+      paymentMethod,
+      isPaid: paymentMethod === 'cod' ? false : false,
     });
 
     // Decrement stock

@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { FiShoppingCart, FiStar, FiMessageCircle, FiX, FiArrowLeft } from 'react-icons/fi';
 import api from '../services/api';
 
+import BackButton from '../components/BackButton';
+
 const Stars = ({ rating, interactive = false, onRate }) => (
   <span>
     {[1, 2, 3, 4, 5].map((s) => (
@@ -29,6 +31,9 @@ const ProductDetailPage = () => {
   const { user } = useSelector((s) => s.auth);
 
   const [qty, setQty] = useState(1);
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
+  const [activeImg, setActiveImg] = useState(0);
   const [review, setReview] = useState({ rating: 5, comment: '' });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [msgModal, setMsgModal] = useState(false);
@@ -43,7 +48,9 @@ const ProductDetailPage = () => {
   const handleAddToCart = async () => {
     if (!user) { navigate('/login'); return; }
     if (user.role !== 'customer') { toast.error('Only customers can add to cart'); return; }
-    const result = await dispatch(addToCart({ productId: id, quantity: qty }));
+    if (product.sizes?.length > 0 && !selectedSize) { toast.error('Please select a size'); return; }
+    if (product.colors?.length > 0 && !selectedColor) { toast.error('Please select a color'); return; }
+    const result = await dispatch(addToCart({ productId: id, quantity: qty, size: selectedSize, color: selectedColor }));
     if (!result.error) toast.success('Added to cart!');
     else toast.error(result.payload || 'Failed to add to cart');
   };
@@ -90,13 +97,31 @@ const ProductDetailPage = () => {
           <FiArrowLeft size={15} /> Back to Products
         </Link>
 
-        {/* Product grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', marginBottom: '3rem' }}>
+        <BackButton />
 
-          {/* Image */}
-          <div style={{ borderRadius: 20, overflow: 'hidden', background: 'var(--bg-card)', border: '1px solid var(--border)', maxHeight: 480 }}>
-            <img src={product.image?.url} alt={product.name}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {/* Product grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem', marginBottom: '3rem' }}>
+
+          {/* Image Gallery */}
+          <div>
+            <div style={{ borderRadius: 0, overflow: 'hidden', background: 'var(--bg-card)', border: '1px solid var(--border)', height: 420 }}>
+              <img
+                src={activeImg === 0 ? product.image?.url : product.images?.[activeImg - 1]?.url}
+                alt={product.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+            {/* Thumbnails */}
+            {product.images?.length > 0 && (
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                {[{ url: product.image?.url }, ...product.images].map((img, i) => (
+                  <div key={i} onClick={() => setActiveImg(i)}
+                    style={{ width: 64, height: 64, overflow: 'hidden', cursor: 'pointer', border: `2px solid ${activeImg === i ? '#c9a96e' : 'transparent'}`, transition: 'border-color 0.2s' }}>
+                    <img src={img.url} alt={`thumb-${i}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Info */}
@@ -133,6 +158,40 @@ const ProductDetailPage = () => {
               </span>
             </div>
 
+            {/* Color selector */}
+            {product.colors?.length > 0 && (
+              <div style={{ marginBottom: '1.2rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '0.6rem' }}>
+                  Select Color <span style={{ color: '#f87171', fontSize: '0.65rem' }}>*required</span>
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {product.colors.map((c) => (
+                    <button key={c} type="button" onClick={() => setSelectedColor(c)}
+                      style={{ padding: '0.35rem 0.9rem', border: `1.5px solid ${selectedColor === c ? '#c9a96e' : 'rgba(255,255,255,0.15)'}`, background: selectedColor === c ? 'rgba(201,169,110,0.15)' : 'transparent', color: selectedColor === c ? '#c9a96e' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.82rem', fontWeight: selectedColor === c ? 800 : 400, fontFamily: 'inherit', transition: 'all 0.15s', borderRadius: 0 }}>
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Size selector */}
+            {product.sizes?.length > 0 && (
+              <div style={{ marginBottom: '1.2rem' }}>
+                <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 700, marginBottom: '0.6rem' }}>
+                  Select Size <span style={{ color: '#f87171', fontSize: '0.65rem' }}>*required</span>
+                </p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {product.sizes.map((s) => (
+                    <button key={s} type="button" onClick={() => setSelectedSize(s)}
+                      style={{ width: 44, height: 44, border: `1.5px solid ${selectedSize === s ? '#c9a96e' : 'rgba(255,255,255,0.15)'}`, background: selectedSize === s ? 'rgba(201,169,110,0.15)' : 'transparent', color: selectedSize === s ? '#c9a96e' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: '0.82rem', fontWeight: selectedSize === s ? 800 : 400, fontFamily: 'inherit', transition: 'all 0.15s', borderRadius: 0 }}>
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {product.stock > 0 && (
               <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: '0.8rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', background: 'var(--bg-3)', borderRadius: 50, padding: '0.3rem 0.8rem' }}>
@@ -161,7 +220,7 @@ const ProductDetailPage = () => {
         </div>
 
         {/* Reviews */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
           <div>
             <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'white', marginBottom: '1.2rem' }}>
               Reviews ({product.numReviews})

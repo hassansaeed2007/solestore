@@ -58,7 +58,7 @@ const HomePage = () => {
         <div className="container" style={{ position: 'relative', zIndex: 1, padding: '6rem 1.5rem' }}>
           <div style={{ maxWidth: 580 }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(201,169,110,0.12)', border: '1px solid rgba(201,169,110,0.35)', borderRadius: 50, padding: '0.4rem 1.2rem', marginBottom: '1.5rem', fontSize: '0.78rem', color: '#c9a96e', letterSpacing: '2.5px', textTransform: 'uppercase', fontWeight: 600 }}>
-              <FiZap size={12} /> New Collection 2025
+              <FiZap size={12} /> New Collection 2026
             </div>
             <h1 style={{ fontSize: 'clamp(2.5rem,5vw,4.5rem)', fontWeight: 900, lineHeight: 1.1, marginBottom: '1.2rem', fontFamily: "'Playfair Display',serif" }}>
               Step Into Your<br />
